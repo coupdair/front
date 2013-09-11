@@ -25,11 +25,15 @@ int main(int argc,char **argv)
   cimg_usage(std::string("front position detection program of the Laboratoire de PhysicoChimie des Processus de Combustion et de l'Atmosphere (PC2A), \
 it uses different GNU libraries (see --info option)\n\n \
 usage: ./front -h -I\n \
-       ./front -t 0.3 -i image_xt.cimg -o graph_xpVSt.cimg\n \
+       ./front -t 0.3 -i image_xt.cimg -o graph_xpVSt.cimg -X false #quiet analysis \n \
+       ./front -t 0.3 -i image_xt.cimg -o graph_xpVSt.cimg -X true  #analysis with display \n \
+       ./front -t 0.3 -i image_xt.cimg -v volume_xyt.cimg  -o graph_xpVSt.cimg -X true  #analysis with display and result position on image \n \
 version: "+std::string(VERSION)+"\n compilation date: " \
             ).c_str());//cimg_usage
-  std::string  input_file_name=cimg_option("-i","data.cimg" ,"Input  data.");
-  std::string output_file_name=cimg_option("-o","graph.cimg","Output data.");
+  std::string  input_file_name=cimg_option("-i","data.cimg"  ,"[in]  data.");
+  std::string vinput_file_name=cimg_option("-v","volume.cimg","[in]  volume.");
+  std::string output_file_name=cimg_option("-o","graph.cimg" ,"[out] graph.");
+  std::string vutput_file_name=cimg_option("-d","volumeWithPos.cimg","[out] volume with detected position.");
   ///standard GNU/CImg program options
   const bool show_h   =cimg_option("-h",    false,NULL);//-h hidden option
         bool show_help=cimg_option("--help",show_h,"help (or -h option)");show_help=show_h|show_help;//same --help or -h option
@@ -71,6 +75,20 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   else position.print("position vs time");
 
   position.save(output_file_name.c_str());
+
+  //show position
+  if(show)
+  {
+    //load volume
+    CImg<float> img_vol(vinput_file_name.c_str());
+    display_print(img_vol,show,vinput_file_name);
+    
+    //modify volume
+//! \todo add draw_line for each time (i.e. z) at x position (i.e. position(t))
+
+    //save
+    img_vol.save(vutput_file_name.c_str());
+  }//volume show
 
   std::exit(0);
   return 0;
