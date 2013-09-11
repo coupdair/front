@@ -48,9 +48,32 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   CImg<float> img_src(input_file_name.c_str());
   display_print(img_src,show,input_file_name);
 
+  ///binarisation
   CImg<int> img_bin=img_src.get_threshold(binary_threshold);
   display_print(img_bin,show,output_file_name);
-img_bin.save(output_file_name.c_str());
+
+  ///position detection
+  CImg<int> position(img_bin.height());
+position.print("pos ini");
+  cimg_forX(position,t)
+  {
+    //get single line
+    const CImg<int> row=img_bin.get_shared_line(t);
+row.print("row");
+    //search for last maximum position
+    int xpos=-1;
+    cimg_forX(row,x)
+    {
+      if(row(x)>0) xpos=x;
+    }//x loop
+    position(t)=xpos;
+position.print("pos act");
+  }//time loop
+position.print("pos res");
+
+position.display_graph("position");
+
+  position.save(output_file_name.c_str());
 
   std::exit(0);
   return 0;
