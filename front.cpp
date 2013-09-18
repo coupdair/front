@@ -141,7 +141,14 @@ version: "+std::string(VERSION)+"\n compilation date: " \
       //draw single line
       img_vol.draw_line(position(t),y0,t,position(t),y1,t,max);
       //show part of volume only
-      if((t>t0)&&(t<t1)) (img_vol.get_shared_slice(t)).display("plane");
+      if((t>t0)&&(t<t1))
+      {
+        CImgList<float> list(2);
+        list(0)=img_vol.get_shared_slice(t);
+        list(1)=img_vol.get_shared_slice(t-1);//! \todo redraw line with local max
+        CImg<float> disp=list.get_append('y');
+        disp.display("plane");
+      }
     }
     //save
     img_vol.save(vutput_file_name.c_str());
