@@ -121,15 +121,15 @@ version: "+std::string(VERSION)+"\n compilation date: " \
       std::exit(1);
       return 1;
     }
-    //modify volume
-//! \todo . add draw_line for each time (i.e. z) at x position (i.e. position(t))
+    //modify volume by drawing a line for each time (i.e. z) at x position (i.e. position(t))
     const int max[1]={img_vol.max()};
     int y0=0;
     int y1=img_vol.height()-1;
     cimg_forZ(img_vol,t)
     {
-      //get single line
+      //draw single line
       img_vol.draw_line(position(t),y0,t,position(t),y1,t,max);
+//show part of volume only
 if((t>165)&&(t<180)) (img_vol.get_shared_slice(t)).display("plane");
     }
     //save
