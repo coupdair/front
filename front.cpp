@@ -44,6 +44,9 @@ version: "+std::string(VERSION)+"\n compilation date: " \
 #endif
   ///threshold
   float binary_threshold=cimg_option("-t",0.3,"binary threshold for input image (e.g. 0.3)");
+  ///time for show (extractin future ?)
+  int t0=cimg_option("-t0",165,"time range: first time index for showing position detection (i.e. z in CImg volume)");
+  int t1=cimg_option("-t1",180,"time range: last  time index");
   ///stop help request
   if(show_help) {/*print_help(std::cerr);*/return 0;}
   //}option
@@ -53,6 +56,14 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   CImg<int> img_vol;
   if(show) img_vol=img_src;
   display_print(img_src,show,input_file_name);
+
+  //check time indexes
+  ///lowest limit
+  if(t0<0)  t0=0;
+  if(t1<t0) t1=t0;
+  ///upper limit
+  if(t1>img_src.depth()-1)  t1=img_src.depth()-1;
+  if(t1<t0) t0=t1;
 
   ///profile
   CImg<float> profile(img_src.depth(),1,1,5);
@@ -129,8 +140,8 @@ version: "+std::string(VERSION)+"\n compilation date: " \
     {
       //draw single line
       img_vol.draw_line(position(t),y0,t,position(t),y1,t,max);
-//show part of volume only
-if((t>165)&&(t<180)) (img_vol.get_shared_slice(t)).display("plane");
+      //show part of volume only
+      if((t>t0)&&(t<t1)) (img_vol.get_shared_slice(t)).display("plane");
     }
     //save
     img_vol.save(vutput_file_name.c_str());
