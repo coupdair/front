@@ -27,12 +27,10 @@ int main(int argc,char **argv)
 it uses different GNU libraries (see --info option)\n\n \
 usage: ./front -h -I\n \
        ./front -t 0.3 -i image_xt.cimg -o graph_xpVSt.cimg -X false #quiet analysis \n \
-       ./front -t 0.3 -i image_xt.cimg -o graph_xpVSt.cimg -X true  #analysis with display \n \
-       ./front -t 0.3 -i image_xt.cimg -v volume_xyt.cimg  -o graph_xpVSt.cimg -X true  #analysis with display and result position on image \n \
+       ./front -t 0.3 -i volume_xyt.cimg  -o graph_xpVSt.cimg -X true  #analysis with display and result position on image \n \
 version: "+std::string(VERSION)+"\n compilation date: " \
             ).c_str());//cimg_usage
-  std::string  input_file_name=cimg_option("-i","data.cimg"  ,"[in]  data.");
-  std::string vinput_file_name=cimg_option("-v","volume.cimg","[in]  volume.");
+  std::string  input_file_name=cimg_option("-i","volume.cimg","[in]  volume.");
   std::string output_file_name=cimg_option("-o","graph.cimg" ,"[out] graph.");
   std::string vutput_file_name=cimg_option("-d","volumeWithPos.cimg","[out] volume with detected position.");
   ///standard GNU/CImg program options
@@ -51,8 +49,25 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   //}option
 
   CImg<float> img_src(input_file_name.c_str());
+  CImg<int> img_vol=img_src;
   display_print(img_src,show,input_file_name);
 
+  ///
+  CImg<float> profile(img_src.depth(),1,1,2);
+  cimg_forZ(img_src,t)
+  {
+    //get single image
+    const CImg<float> img=img_src.get_shared_slice(t);
+    //search for last maximum position
+    profile(t,0,0,0)=img.min();//min
+    profile(t,0,0,1)=img.max();//max
+  }//time
+  //save
+  profile.display_graph("min/max v.s. time");
+
+  ///ratio
+
+/*
   ///binarisation
   CImg<int> img_bin=img_src.get_threshold(binary_threshold);
   display_print(img_bin,show,output_file_name);
@@ -81,7 +96,6 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   if(show)
   {
     //load volume
-    CImg<int> img_vol(vinput_file_name.c_str());
     display_print(img_vol,show,vinput_file_name);
     if(position.width()!=img_vol.depth())
     {
@@ -103,7 +117,7 @@ if((t>170)&&(t<180)) (img_vol.get_shared_slice(t)).display("plane");
     //save
     img_vol.save(vutput_file_name.c_str());
   }//volume show
-
+*/
   std::exit(0);
   return 0;
 }//main
