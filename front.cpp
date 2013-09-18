@@ -49,7 +49,9 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   //}option
 
   CImg<float> img_src(input_file_name.c_str());
-  CImg<int> img_vol=img_src;
+  //copy volume for detection position show
+  CImg<int> img_vol;
+  if(show) img_vol=img_src;
   display_print(img_src,show,input_file_name);
 
   ///profile
@@ -75,9 +77,18 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   //display
   (profile.get_shared_channels(3,4)).display_graph("max,mean gradients v.s. time e.g. g=f(t)/f(t+1)");
 
-/*
+  ///averaging along y
+  CImg<float> img_avg(img_src.width(),img_src.depth());
+  img_avg.fill(0.0);
+  cimg_forXYZ(img_src,x,y,t)
+  {
+    img_avg(x,t)+=img_src(x,y,t);
+  }
+  img_avg/=img_src.height();
+  display_print(img_avg,show,output_file_name);
+
   ///binarisation
-  CImg<int> img_bin=img_src.get_threshold(binary_threshold);
+  CImg<int> img_bin=img_avg.get_threshold(binary_threshold);
   display_print(img_bin,show,output_file_name);
 
   ///position detection
@@ -104,7 +115,6 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   if(show)
   {
     //load volume
-    display_print(img_vol,show,vinput_file_name);
     if(position.width()!=img_vol.depth())
     {
       std::cerr<<"error: img/vol dimension.\n";
@@ -120,12 +130,12 @@ version: "+std::string(VERSION)+"\n compilation date: " \
     {
       //get single line
       img_vol.draw_line(position(t),y0,t,position(t),y1,t,max);
-if((t>170)&&(t<180)) (img_vol.get_shared_slice(t)).display("plane");
+if((t>165)&&(t<180)) (img_vol.get_shared_slice(t)).display("plane");
     }
     //save
     img_vol.save(vutput_file_name.c_str());
   }//volume show
-*/
+
   std::exit(0);
   return 0;
 }//main
