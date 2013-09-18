@@ -68,8 +68,8 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   ///grad
   cimg_for_inZ(img_src,0,profile.width()-2,t)
   {
-    profile(t+1,0,0,3)=(profile(t+1,0,0,1)==0)?0:profile(t,0,0,1)/profile(t+1,0,0,1);
-    profile(t+1,0,0,4)=(profile(t+1,0,0,2)==0)?0:profile(t,0,0,2)/profile(t+1,0,0,2);
+    profile(t,0,0,3)=(profile(t,0,0,1)==0)?0:profile(t+1,0,0,1)/profile(t,0,0,1);
+    profile(t,0,0,4)=(profile(t,0,0,2)==0)?0:profile(t+1,0,0,2)/profile(t,0,0,2);
   }
   (profile.get_shared_channels(3,4)).display_graph("max,mean gradients v.s. time e.g. g=f(t)/f(t+1)");
 
