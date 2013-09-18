@@ -2,6 +2,7 @@
 
 */
 
+#include <iostream>
 #include <string>
 #include "CImg.h"
 using namespace cimg_library;
@@ -61,7 +62,7 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   cimg_forX(position,t)
   {
     //get single line
-    const CImg<int> row=img_bin.get_shared_line(t);
+    const CImg<int> row=img_bin.get_shared_row(t);
     //search for last maximum position
     int xpos=-1;
     cimg_forX(row,x)
@@ -80,12 +81,25 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   if(show)
   {
     //load volume
-    CImg<float> img_vol(vinput_file_name.c_str());
+    CImg<int> img_vol(vinput_file_name.c_str());
     display_print(img_vol,show,vinput_file_name);
-    
+    if(position.width()!=img_vol.depth())
+    {
+      std::cerr<<"error: img/vol dimension.\n";
+      std::exit(1);
+      return 1;
+    }
     //modify volume
-//! \todo add draw_line for each time (i.e. z) at x position (i.e. position(t))
-
+//! \todo . add draw_line for each time (i.e. z) at x position (i.e. position(t))
+    const int max[1]={img_vol.max()};
+    int y0=0;
+    int y1=img_vol.height()-1;
+    cimg_forZ(img_vol,t)
+    {
+      //get single line
+      img_vol.draw_line(position(t),y0,t,position(t),y1,t,max);
+if((t>170)&&(t<180)) (img_vol.get_shared_slice(t)).display("plane");
+    }
     //save
     img_vol.save(vutput_file_name.c_str());
   }//volume show
