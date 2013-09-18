@@ -53,7 +53,7 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   display_print(img_src,show,input_file_name);
 
   ///
-  CImg<float> profile(img_src.depth(),1,1,2);
+  CImg<float> profile(img_src.depth(),1,1,3);
   cimg_forZ(img_src,t)
   {
     //get single image
@@ -64,8 +64,9 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   }//time
   //save
   profile.display_graph("min/max v.s. time");
-
   ///ratio
+  cimg_for_inZ(img_src,0,profile.width()-2,t) profile(t+1,0,0,2)=(profile(t+1,0,0,1)==0)?0:profile(t,0,0,1)/profile(t+1,0,0,1);
+  (profile.get_shared_channel(2)).display_graph("max(t)/max(t+1) v.s. time");
 
 /*
   ///binarisation
