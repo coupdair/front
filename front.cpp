@@ -187,6 +187,12 @@ histo.print("x position histogram");
   if(show) xpositionT.display_graph("xposition");
   /*else*/ xpositionT.print("xposition vs time");
 
+  //show several position detection results
+  CImg<int> xposition(position.width(),1,1,2);
+  xposition.draw_image(0,0,0,0,position);
+  xposition.draw_image(0,0,0,1,xpositionT);
+  xposition.display_graph("x position detections");
+
   //show position
   if(show)
   {
