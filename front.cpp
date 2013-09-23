@@ -49,8 +49,8 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   float binary_threshold=cimg_option("-at",8.0,"average binary threshold for input image (e.g. 0.3)");
   float raw_binary_threshold=cimg_option("-rt",5.0,"raw binary threshold for input image (e.g. 5.0)");
   ///time for show (extract in future ?)
-  int t0=cimg_option("-t0",165,"time range: first time index for showing position detection (i.e. z in CImg volume)");
-  int t1=cimg_option("-t1",180,"time range: last  time index");
+  int t0=cimg_option("-t0",395,"time range: first time index for showing position detection (i.e. z in CImg volume)");
+  int t1=cimg_option("-t1",410,"time range: last  time index");
   ///stop help request
   if(show_help) {/*print_help(std::cerr);*/return 0;}
   //}option
@@ -146,7 +146,7 @@ version: "+std::string(VERSION)+"\n compilation date: " \
       if(row(x)>0) xpos=x;
     }//x loop
     xpositionYT(y,t)=xpos;
-  }//(y,time) loop
+  }//y and time loop
 
   if(show) xpositionYT.display("xpositionYT");
   else xpositionYT.print("position(y,time)");
@@ -155,6 +155,18 @@ version: "+std::string(VERSION)+"\n compilation date: " \
 
   ///PDF
   //! \todo _ PDF for each t
+  cimg_forY(xpositionYT,t)
+  {
+    //show histogram for time selection
+    if((t>t0)&&(t<t1))
+    {
+      const CImg<float> row=xpositionYT.get_shared_row(t);
+row.print("x position vs y");
+      CImg<float> histo=row.get_histogram(10);
+histo.print("x position histogram");
+      histo.display_graph("PDF");
+    }//show
+  }//time loop
 
   //show position
   if(show)
@@ -177,13 +189,16 @@ version: "+std::string(VERSION)+"\n compilation date: " \
       //show part of volume only
       if((t>t0)&&(t<t1))
       {
+/*
         CImgList<float> list(2);
         list(0)=img_vol.get_shared_slice(t);
         list(1)=img_vol.get_shared_slice(t-1);//! \todo redraw line with local max
         CImg<float> disp=list.get_append('y');
+*/
+        CImg<float> disp=img_vol.get_shared_slice(t);
         disp.display("plane");
       }
-    }
+    }//time loop
     //save
     img_vol.save(vutput_file_name.c_str());
   }//volume show
