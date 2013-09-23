@@ -172,16 +172,16 @@ version: "+std::string(VERSION)+"\n compilation date: " \
     }//y loop
     if(count>0) xpositionT(t)/=count; else xpositionT(t)=-1;
     //show histogram for time selection
-/*
+/**/
     if((t>t0)&&(t<t1))
     {
       const CImg<float> row=xpositionYT.get_shared_row(t);
 row.print("x position vs y");
-      CImg<float> histo=row.get_histogram(10);
+      CImg<float> histo=row.get_histogram(row.width()-1,0,row.width()-2);
 histo.print("x position histogram");
       histo.display_graph("PDF");
     }//show selection
-*/
+/**/
   }//time loop
 
   if(show) xpositionT.display_graph("xposition");
