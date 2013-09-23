@@ -154,10 +154,16 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   xpositionYT.save(output_file_name.c_str());
 
   ///PDF
-  //! \todo _ PDF for each t
+  //! \todo . PDF for each t
+  CImg<int> xpositionT(img_src.depth());
   cimg_forY(xpositionYT,t)
   {
+    //average x position
+    xpositionT(t)=0;
+    cimg_forX(xpositionYT,y) xpositionT(t)+=xpositionYT(y,t);
+    xpositionT(t)/=xpositionYT.width();
     //show histogram for time selection
+/*
     if((t>t0)&&(t<t1))
     {
       const CImg<float> row=xpositionYT.get_shared_row(t);
@@ -165,8 +171,12 @@ row.print("x position vs y");
       CImg<float> histo=row.get_histogram(10);
 histo.print("x position histogram");
       histo.display_graph("PDF");
-    }//show
+    }//show selection
+*/
   }//time loop
+
+  if(show) xpositionT.display_graph("xposition");
+  /*else*/ xpositionT.print("xposition vs time");
 
   //show position
   if(show)
@@ -201,9 +211,12 @@ histo.print("x position histogram");
 */
         CImg<int> disp=img_src.get_slice(t);
         const int lmax[1]={disp.max()};
-        disp.draw_line(position(t),y0,position(t),y1,lmax);
+        const int lmaxL[1]={(int)((float)disp.max()*0.8f)};
+        disp.draw_line(position(t)  ,y0, position(t) ,y1,lmax);    //draw position of average along y
+        disp.draw_line(xpositionT(t),y0,xpositionT(t),y1,lmaxL);   //draw average position
+        cimg_forY(disp,y) disp.draw_point(xpositionYT(y,t),y,lmax);//draw positions
         disp.display("plane");
-      }
+      }//show selection
     }//time loop
     //save
     img_vol.save(vutput_file_name.c_str());
