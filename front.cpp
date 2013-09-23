@@ -33,8 +33,8 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   std::string  input_file_name=cimg_option("-i","volume.cimg","[in]  volume.");
   std::string output_file_name=cimg_option("-o","graph.cimg" ,"[out] graph.");
   std::string vutput_file_name=cimg_option("-d","volumeWithPos.cimg","[out] volume with detected position.");
-  float  ts=cimg_option("-ts",0.1234,"[in] time start (s).");
-  float fps=cimg_option("-tu",5000,  "[in] time unit in image/second (fps).");
+  float  ts=cimg_option("-ts",0.1328,"time start (s).");
+  float fps=cimg_option("-tu",5000,  "time unit in image/second (fps).");
   std::string tutput_file_name=cimg_option("-ta","time.cimg" ,"[out] time axis.");
   ///standard GNU/CImg program options
   const bool show_h   =cimg_option("-h",    false,NULL);//-h hidden option
@@ -156,6 +156,14 @@ version: "+std::string(VERSION)+"\n compilation date: " \
     //save
     img_vol.save(vutput_file_name.c_str());
   }//volume show
+
+  {//time axis
+  CImg<float> time(img_src.depth());
+  float tim=ts;
+  float tstep=1/fps;
+  cimg_forX(time,t) time(t)=tim+tstep*t;
+  time.save(tutput_file_name.c_str());
+  }//time axis
 
   std::exit(0);
   return 0;
