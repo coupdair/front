@@ -158,10 +158,19 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   CImg<int> xpositionT(img_src.depth());
   cimg_forY(xpositionYT,t)
   {
+    //! \todo max histogram x position
+    //! \todo median x position
     //average x position
-    xpositionT(t)=0;
-    cimg_forX(xpositionYT,y) xpositionT(t)+=xpositionYT(y,t);
-    xpositionT(t)/=xpositionYT.width();
+    xpositionT(t)=0;int count=0;
+    cimg_forX(xpositionYT,y)
+    {
+      if((xpositionYT(y,t)>-1)&&(xpositionYT(y,t)<img_src.depth()-1))
+      {
+        xpositionT(t)+=xpositionYT(y,t);
+        ++count;
+      }//valid position
+    }//y loop
+    if(count>0) xpositionT(t)/=count; else xpositionT(t)=-1;
     //show histogram for time selection
 /*
     if((t>t0)&&(t<t1))
