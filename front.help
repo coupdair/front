@@ -1,0 +1,22 @@
+
+ [0;31;59mfront[0;0;0m: front position detection program of the Laboratoire de PhysicoChimie des Processus de Combustion et de l'Atmosphere (PC2A), it uses different GNU libraries (see --info option)
+
+ usage: ./front -h -I
+        ./front -t 0.3 -i image_xt.cimg -o graph_xpVSt.cimg -X false #quiet analysis 
+        ./front -t 0.3 -i volume_xyt.cimg  -o graph_xpVSt.cimg -X true  #analysis with display and result position on image 
+ version: v0.0.4
+ compilation date:  (Sep 23 2013, 22:27:21)
+
+    [1m-i              [0;0;0m volume.cimg              [0;32;59m[in]  volume.[0;0;0m
+    [1m-o              [0;0;0m graph.cimg               [0;32;59m[out] graph.[0;0;0m
+    [1m-d              [0;0;0m volumeWithPos.cimg       [0;32;59m[out] volume with detected position.[0;0;0m
+    [1m-ts             [0;0;0m 0.1328                   [0;32;59mtime start (s).[0;0;0m
+    [1m-tu             [0;0;0m 5000                     [0;32;59mtime unit in image/second (fps).[0;0;0m
+    [1m-ta             [0;0;0m time.cimg                [0;32;59m[out] time axis.[0;0;0m
+    [1m--help          [0;0;0m true                     [0;32;59mhelp (or -h option)[0;0;0m
+    [1m--info          [0;0;0m false                    [0;32;59mshow compilation options (or -I option)[0;0;0m
+    [1m--show          [0;0;0m true                     [0;32;59mshow GUI (or -X option)[0;0;0m
+    [1m-at             [0;0;0m 8                        [0;32;59maverage binary threshold for input image (e.g. 0.3)[0;0;0m
+    [1m-rt             [0;0;0m 5                        [0;32;59mraw binary threshold for input image (e.g. 5.0)[0;0;0m
+    [1m-t0             [0;0;0m 395                      [0;32;59mtime range: first time index for showing position detection (i.e. z in CImg volume)[0;0;0m
+    [1m-t1             [0;0;0m 410                      [0;32;59mtime range: last  time index[0;0;0m

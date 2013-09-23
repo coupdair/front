@@ -27,6 +27,7 @@ int main(int argc,char **argv)
 it uses different GNU libraries (see --info option)\n\n \
 usage: ./front -h -I\n \
        ./front -t 0.3 -i image_xt.cimg -o graph_xpVSt.cimg -X false #quiet analysis \n \
+NEED CMD LINE UPDATE\n \
        ./front -t 0.3 -i volume_xyt.cimg  -o graph_xpVSt.cimg -X true  #analysis with display and result position on image \n \
 version: "+std::string(VERSION)+"\n compilation date: " \
             ).c_str());//cimg_usage
