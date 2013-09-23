@@ -1,5 +1,5 @@
 #front detection
-version=v0.0.2
+version=v0.0.4
 ##CImg-v1.5.6
-g++ -o front front.cpp -I../CImg/ -Wall -W -ansi -pedantic -O3 -fno-tree-pre -Dcimg_use_vt100 -I/usr/X11R6/include -lm -L/usr/X11R6/lib -lpthread -lX11 -DVERSION=\"$version\"
+g++ -o front front.cpp -I../CImg/ -Wall -W -ansi -pedantic -O0 -fno-tree-pre -Dcimg_use_vt100 -I/usr/X11R6/include -lm -L/usr/X11R6/lib -lpthread -lX11 -DVERSION=\"$version\"
 

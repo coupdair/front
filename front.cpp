@@ -46,8 +46,9 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   bool show=cimg_option("--show",show_h,"show GUI (or -X option)");show=showX|show;//same --show or -X option
 #endif
   ///threshold
-  float binary_threshold=cimg_option("-t",0.3,"binary threshold for input image (e.g. 0.3)");
-  ///time for show (extractin future ?)
+  float binary_threshold=cimg_option("-at",8.0,"average binary threshold for input image (e.g. 0.3)");
+  float raw_binary_threshold=cimg_option("-rt",5.0,"raw binary threshold for input image (e.g. 5.0)");
+  ///time for show (extract in future ?)
   int t0=cimg_option("-t0",165,"time range: first time index for showing position detection (i.e. z in CImg volume)");
   int t1=cimg_option("-t1",180,"time range: last  time index");
   ///stop help request
@@ -68,6 +69,7 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   if(t1>img_src.depth()-1)  t1=img_src.depth()-1;
   if(t1<t0) t0=t1;
 
+//image statistics//
   ///profile
   CImg<float> profile(img_src.depth(),1,1,5);
   cimg_forZ(img_src,t)
@@ -91,6 +93,7 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   //display
   (profile.get_shared_channels(3,4)).display_graph("max,mean gradients v.s. time e.g. g=f(t)/f(t+1)");
 
+//x position of average along y//
   ///averaging along y
   CImg<float> img_avg(img_src.width(),img_src.depth());
   img_avg.fill(0.0);
@@ -106,7 +109,7 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   display_print(img_bin,show,output_file_name);
 
   ///position detection
-  CImg<int> position(img_bin.height());
+  CImg<int> position(img_src.depth());
   cimg_forX(position,t)
   {
     //get single line
@@ -121,9 +124,37 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   }//time loop
 
   if(show) position.display_graph("position");
-  else position.print("position vs time");
+  /*else*/ position.print("position vs time");
 
   position.save(output_file_name.c_str());
+
+//x position base on PDF//
+  ///binarisation
+  img_bin=img_src.get_threshold(raw_binary_threshold);
+  display_print(img_bin,show,output_file_name);
+
+  ///position detection
+  CImg<int> xpositionYT(img_src.height(),img_src.depth());
+  cimg_forXY(xpositionYT,y,t)
+  {
+    //get single line
+    const CImg<int> row=img_bin.get_shared_row(y,t);
+    //search for last maximum position
+    int xpos=-1;
+    cimg_forX(row,x)
+    {
+      if(row(x)>0) xpos=x;
+    }//x loop
+    xpositionYT(y,t)=xpos;
+  }//(y,time) loop
+
+  if(show) xpositionYT.display("xpositionYT");
+  else xpositionYT.print("position(y,time)");
+
+  xpositionYT.save(output_file_name.c_str());
+
+  ///PDF
+  //! \todo _ PDF for each t
 
   //show position
   if(show)
