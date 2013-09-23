@@ -190,12 +190,18 @@ histo.print("x position histogram");
       if((t>t0)&&(t<t1))
       {
 /*
-        CImgList<float> list(2);
+        CImgList<int> list(2);
         list(0)=img_vol.get_shared_slice(t);
         list(1)=img_vol.get_shared_slice(t-1);//! \todo redraw line with local max
         CImg<float> disp=list.get_append('y');
 */
-        CImg<float> disp=img_vol.get_shared_slice(t);
+/*
+        CImg<int> disp=img_vol.get_shared_slice(t);
+        disp.display("plane");
+*/
+        CImg<int> disp=img_src.get_slice(t);
+        const int lmax[1]={disp.max()};
+        disp.draw_line(position(t),y0,position(t),y1,lmax);
         disp.display("plane");
       }
     }//time loop
