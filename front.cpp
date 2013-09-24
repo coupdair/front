@@ -221,8 +221,6 @@ histo.print("x position histogram");
   xposition.save(output_file_name.c_str());
 
   //show position
-  if(show)
-  {
     //load volume
     if(position.width()!=img_vol.depth())
     {
@@ -239,6 +237,8 @@ histo.print("x position histogram");
       //draw single line
       img_vol.draw_line(position(t),y0,t,position(t),y1,t,max);
       //show part of volume only
+  if(show)
+  {
       if((t>t0)&&(t<t1))
       {
 /*
@@ -259,10 +259,10 @@ histo.print("x position histogram");
         cimg_forY(disp,y) disp.draw_point(xpositionYT(y,t),y,lmax);//draw positions
         disp.display("plane");
       }//show selection
+  }//volume show
     }//time loop
     //save
     img_vol.save(vutput_file_name.c_str());
-  }//volume show
 
   {//time axis
   CImg<float> time(img_src.depth());
