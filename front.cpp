@@ -154,15 +154,34 @@ version: "+std::string(VERSION)+"\n compilation date: " \
 
   if(show) xpositionYT.display("xpositionYT");
   else xpositionYT.print("position(y,time)");
-
-  xpositionYT.save(output_file_name.c_str());
+  //xpositionYT.save(output_file_name.c_str());
 
   ///PDF
   //! \todo . PDF for each t
   CImg<int> xpositionT(img_src.depth());
+  CImg<int> xpositionHisto((img_src.width()-1)/1,img_src.depth());
+  CImg<int> xpositionH(img_src.depth());
   cimg_forY(xpositionYT,t)
   {
-    //! \todo max histogram x position
+    //! \todo . max histogram x position
+    const CImg<float> row=xpositionYT.get_shared_row(t);
+//row.print("x position vs y");
+    const CImg<int> histo=row.get_histogram(xpositionHisto.width(),0,img_src.width()-2);
+    xpositionHisto.draw_image(0,t,histo);
+    if(histo.max()>0)
+    {
+      //search for last maximum position
+      int xpos=-1;
+      int max=-1;
+      cimg_forX(histo,x)
+      {
+        if(histo(x)>max) {xpos=x;max=histo(x);}
+      }//class loop
+      //! \bug in case of class width!=1
+      xpositionH(t)=xpos;
+    } else xpositionH(t)=-1;
+//histo.print("x position histogram");
+    //! \todo max position
     //! \todo median x position
     //average x position
     xpositionT(t)=0;int count=0;
@@ -179,23 +198,27 @@ version: "+std::string(VERSION)+"\n compilation date: " \
 /**/
     if((t>t0)&&(t<t1))
     {
-      const CImg<float> row=xpositionYT.get_shared_row(t);
-row.print("x position vs y");
-      CImg<float> histo=row.get_histogram(img_src.width()-1,0,img_src.width()-2);
+      CImg<float> histo=xpositionHisto.get_shared_row(t);
 histo.print("x position histogram");
       histo.display_graph("PDF");
     }//show selection
 /**/
   }//time loop
 
-  if(show) xpositionT.display_graph("xposition");
+  if(show) xpositionH.display_graph("xpositionH");
+  /*else*/ xpositionH.print("xposition vs time");
+
+  if(show) xpositionT.display_graph("xpositionT");
   /*else*/ xpositionT.print("xposition vs time");
 
   //show several position detection results
-  CImg<int> xposition(position.width(),1,1,2);
+  CImg<int> xposition(position.width(),1,1,3);
   xposition.draw_image(0,0,0,0,position);
   xposition.draw_image(0,0,0,1,xpositionT);
+  xposition.draw_image(0,0,0,2,xpositionH);
   xposition.display_graph("x position detections");
+
+  xposition.save(output_file_name.c_str());
 
   //show position
   if(show)
