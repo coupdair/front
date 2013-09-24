@@ -6,7 +6,7 @@
         ./front -at 12.3 -rt 12.0 -i volume_xyt.cimg -o graph_xpVSt.cimg -ts 0.123 -tu 0.001 -ta time_axis.cimg -d volume_xyt.posx.cimg -X true -t0 395 -t1 410 #analysis with display and result position on image 
         ./front -X false #quiet analysis 
  version: v0.0.4
- compilation date:  (Sep 24 2013, 12:20:20)
+ compilation date:  (Sep 24 2013, 14:44:18)
 
     [1m-i              [0;0;0m volume.cimg              [0;32;59m[in]  volume.[0;0;0m
     [1m-o              [0;0;0m graph.cimg               [0;32;59m[out] graph.[0;0;0m

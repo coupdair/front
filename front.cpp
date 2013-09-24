@@ -181,7 +181,7 @@ version: "+std::string(VERSION)+"\n compilation date: " \
     {
       const CImg<float> row=xpositionYT.get_shared_row(t);
 row.print("x position vs y");
-      CImg<float> histo=row.get_histogram(row.width()-1,0,row.width()-2);
+      CImg<float> histo=row.get_histogram(img_src.width()-1,0,img_src.width()-2);
 histo.print("x position histogram");
       histo.display_graph("PDF");
     }//show selection
