@@ -26,9 +26,12 @@ int main(int argc,char **argv)
   cimg_usage(std::string("front position detection program of the Laboratoire de PhysicoChimie des Processus de Combustion et de l'Atmosphere (PC2A), \
 it uses different GNU libraries (see --info option)\n\n \
 usage: ./front -h -I\n \
-       ./front -t 0.3 -i image_xt.cimg -o graph_xpVSt.cimg -X false #quiet analysis \n \
-NEED CMD LINE UPDATE\n \
-       ./front -t 0.3 -i volume_xyt.cimg  -o graph_xpVSt.cimg -X true  #analysis with display and result position on image \n \
+       old: ./front -t 0.3 -i image_xt.cimg -o graph_xpVSt.cimg -X false #front.v0.0.1\n \
+       ./front -at 12.3 -rt 12.0 \
+-i volume_xyt.cimg -o graph_xpVSt.cimg \
+-ts 0.123 -tu 0.001 -ta time_axis.cimg \
+-d volume_xyt.posx.cimg -X true -t0 395 -t1 410 #analysis with display and result position on image \n \
+       ./front -X false #quiet analysis \n \
 version: "+std::string(VERSION)+"\n compilation date: " \
             ).c_str());//cimg_usage
   std::string  input_file_name=cimg_option("-i","volume.cimg","[in]  volume.");
