@@ -10,24 +10,25 @@ using namespace cimg_library;
 //! detection of position from binary image
 /**
  *  position is right tail of line (i.e. last none zero value position in row)
- *  \param img_bin: binary image (x,y)
- *  \return position image (x,1) as interger position
+ *  \param img_bin: binary image (x,y,t) or (x,t)
+ *  \return position image (y,t) or (t) as interger position
+ *  \note can be used either for (x,y,t) or (x,t) binary images.
 **/
 CImg<int> binary_position(CImg<int> &img_bin)
 {
-  CImg<int> position(img_bin.height());
-  cimg_forX(position,t)
+  CImg<int> position(img_bin.height(),img_bin.depth());
+  cimg_forXY(position,y,t)
   {
     //get single line
-    const CImg<int> row=img_bin.get_shared_row(t);
+    const CImg<int> row=img_bin.get_shared_row(y,t);
     //search for last maximum position
     int xpos=-1;
     cimg_forX(row,x)
     {
       if(row(x)>0) xpos=x;
     }//x loop
-    position(t)=xpos;
-  }//time loop
+    position(y,t)=xpos;
+  }//(y and) time loop
   return position;
 }//binary_position
 
@@ -147,21 +148,8 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   ///binarisation
   img_bin=img_src.get_threshold(raw_binary_threshold);
   display_print(img_bin,show,output_file_name);
-
   ///position detection
-  CImg<int> xpositionYT(img_src.height(),img_src.depth());
-  cimg_forXY(xpositionYT,y,t)
-  {
-    //get single line
-    const CImg<int> row=img_bin.get_shared_row(y,t);
-    //search for last maximum position
-    int xpos=-1;
-    cimg_forX(row,x)
-    {
-      if(row(x)>0) xpos=x;
-    }//x loop
-    xpositionYT(y,t)=xpos;
-  }//y and time loop
+  CImg<int> xpositionYT=binary_position(img_bin);
 
   if(show) xpositionYT.display("xpositionYT");
   else xpositionYT.print("position(y,time)");
