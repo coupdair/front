@@ -141,19 +141,15 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   CImg<int> xpositionAF=binary_position(img_bin);//Fixed Threshold
 
   ///binarisation with dynamic threshold
-//! \todo . setup threshold for each row using (max-min)*percent_threshold then get_threshold(threshold)
-img_bin.fill(-1);//init. with default value
-  //loop for dynamic threshold
   cimg_forY(img_avg,t)
-  {
+  {//loop for dynamic threshold
     //get single line
     const CImg<int> row=img_avg.get_shared_row(t);
     //set dynamic threshold
     int max=row.max(),min=row.min();
     int threshold=(float)(max-min)*percent_threshold+min;
-std::cerr<<"threshold="<<threshold;
-row.print("row");
-if(threshold!=min) img_bin.draw_image(0,t,row.get_threshold(threshold));
+    //draw binary line
+    img_bin.draw_image(0,t,row.get_threshold(threshold));
   }//time loop
   display_print(img_bin,show,output_file_name);
   ///position detection
