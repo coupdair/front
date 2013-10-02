@@ -7,6 +7,30 @@
 #include "CImg.h"
 using namespace cimg_library;
 
+//! detection of position from binary image
+/**
+ *  position is right tail of line (i.e. last none zero value position in row)
+ *  \param img_bin: binary image (x,y)
+ *  \return position image (x,1) as interger position
+**/
+CImg<int> binary_position(CImg<int> &img_bin)
+{
+  CImg<int> position(img_bin.height());
+  cimg_forX(position,t)
+  {
+    //get single line
+    const CImg<int> row=img_bin.get_shared_row(t);
+    //search for last maximum position
+    int xpos=-1;
+    cimg_forX(row,x)
+    {
+      if(row(x)>0) xpos=x;
+    }//x loop
+    position(t)=xpos;
+  }//time loop
+  return position;
+}//binary_position
+
 //! either display or/and print based on display at compilation or running time.
 template<typename T>
 void display_print(CImg<T> &img,bool show,std::string &title)
@@ -108,24 +132,11 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   img_avg/=img_src.height();
   display_print(img_avg,show,output_file_name);
 
-  ///binarisation
+  ///binarisation with fixed threshold
   CImg<int> img_bin=img_avg.get_threshold(binary_threshold);
   display_print(img_bin,show,output_file_name);
-
   ///position detection
-  CImg<int> position(img_src.depth());
-  cimg_forX(position,t)
-  {
-    //get single line
-    const CImg<int> row=img_bin.get_shared_row(t);
-    //search for last maximum position
-    int xpos=-1;
-    cimg_forX(row,x)
-    {
-      if(row(x)>0) xpos=x;
-    }//x loop
-    position(t)=xpos;
-  }//time loop
+  CImg<int> position=binary_position(img_bin);
 
   if(show) position.display_graph("position");
   /*else*/ position.print("position vs time");
