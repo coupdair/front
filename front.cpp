@@ -76,6 +76,7 @@ version: "+std::string(VERSION)+"\n compilation date: " \
 #endif
   ///threshold
   float binary_threshold=cimg_option("-at",8.0,"average binary threshold for input image (e.g. 0.3)");
+  float percent_threshold=cimg_option("-dt",12.0,"average dynamic threshold for input image in percent (e.g. 10 for 10%)");percent_threshold/=100.0;
   float raw_binary_threshold=cimg_option("-rt",5.0,"raw binary threshold for input image (e.g. 5.0)");
   ///time for show (extract in future ?)
   int t0=cimg_option("-t0",395,"time range: first time index for showing position detection (i.e. z in CImg volume)");
@@ -141,8 +142,15 @@ version: "+std::string(VERSION)+"\n compilation date: " \
 
   ///binarisation with dynamic threshold
 //! \todo _ setup threshold for each row using (max-min)*percent_threshold then get_threshold(threshold)
-  int threshold=binary_threshold;
-  img_bin=img_avg.get_threshold(threshold);
+  cimg_forY(img_avg,t)
+  {
+    //get single line
+    const CImg<int> row=img_avg.get_shared_row(t);
+    //set dynamic threshold
+    int max=row.max(),min=row.min();
+    int threshold=(float)(max-min)*percent_threshold+min;
+    img_bin.draw_image(0,t,row.get_threshold(threshold));
+  }
   display_print(img_bin,show,output_file_name);
   ///position detection
   CImg<int> xpositionAD=binary_position(img_bin);//Dynamic Threshold

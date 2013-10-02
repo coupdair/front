@@ -6,7 +6,7 @@
         ./front -at 12.3 -rt 12.0 -i volume_xyt.cimg -o graph_xpVSt.cimg -ts 0.123 -tu 0.001 -ta time_axis.cimg -d volume_xyt.posx.cimg -X true -t0 395 -t1 410 #analysis with display and result position on image 
         ./front -X false #quiet analysis 
  version: v0.0.6.dev
- compilation date:  (Oct  2 2013, 11:36:14)
+ compilation date:  (Oct  2 2013, 11:50:03)
 
     [1m-i              [0;0;0m volume.cimg              [0;32;59m[in]  volume.[0;0;0m
     [1m-o              [0;0;0m graph.cimg               [0;32;59m[out] graph.[0;0;0m
@@ -18,6 +18,7 @@
     [1m--info          [0;0;0m false                    [0;32;59mshow compilation options (or -I option)[0;0;0m
     [1m--show          [0;0;0m true                     [0;32;59mshow GUI (or -X option)[0;0;0m
     [1m-at             [0;0;0m 8                        [0;32;59maverage binary threshold for input image (e.g. 0.3)[0;0;0m
+    [1m-dt             [0;0;0m 12                       [0;32;59maverage dynamic threshold for input image in percent (e.g. 10 for 10%)[0;0;0m
     [1m-rt             [0;0;0m 5                        [0;32;59mraw binary threshold for input image (e.g. 5.0)[0;0;0m
     [1m-t0             [0;0;0m 395                      [0;32;59mtime range: first time index for showing position detection (i.e. z in CImg volume)[0;0;0m
     [1m-t1             [0;0;0m 410                      [0;32;59mtime range: last  time index[0;0;0m
