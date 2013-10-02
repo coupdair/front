@@ -16,8 +16,8 @@ using namespace cimg_library;
 **/
 CImg<int> binary_position(CImg<int> &img_bin)
 {
-  CImg<int> position(img_bin.height(),img_bin.depth());
-  cimg_forXY(position,y,t)
+  CImg<int> xposition(img_bin.height(),img_bin.depth());
+  cimg_forXY(xposition,y,t)
   {
     //get single line
     const CImg<int> row=img_bin.get_shared_row(y,t);
@@ -27,9 +27,9 @@ CImg<int> binary_position(CImg<int> &img_bin)
     {
       if(row(x)>0) xpos=x;
     }//x loop
-    position(y,t)=xpos;
+    xposition(y,t)=xpos;
   }//(y and) time loop
-  return position;
+  return xposition;
 }//binary_position
 
 //! either display or/and print based on display at compilation or running time.
@@ -137,12 +137,20 @@ version: "+std::string(VERSION)+"\n compilation date: " \
   CImg<int> img_bin=img_avg.get_threshold(binary_threshold);
   display_print(img_bin,show,output_file_name);
   ///position detection
-  CImg<int> position=binary_position(img_bin);
+  CImg<int> xpositionAF=binary_position(img_bin);//Fixed Threshold
 
-  if(show) position.display_graph("position");
-  /*else*/ position.print("position vs time");
+  ///binarisation with dynamic threshold
+//! \todo _ setup threshold for each row using (max-min)*percent_threshold then get_threshold(threshold)
+  int threshold=binary_threshold;
+  img_bin=img_avg.get_threshold(threshold);
+  display_print(img_bin,show,output_file_name);
+  ///position detection
+  CImg<int> xpositionAD=binary_position(img_bin);//Dynamic Threshold
 
-  position.save(output_file_name.c_str());
+  if(show) xpositionAF.display_graph("xpositionAF");
+  /*else*/ xpositionAF.print("Fixed Threshold position vs time");
+  if(show) xpositionAD.display_graph("xpositionAD");
+  /*else*/ xpositionAD.print("Dynamic Threshold position vs time");
 
 //x position base on PDF//
   ///binarisation
@@ -153,16 +161,15 @@ version: "+std::string(VERSION)+"\n compilation date: " \
 
   if(show) xpositionYT.display("xpositionYT");
   else xpositionYT.print("position(y,time)");
-  //xpositionYT.save(output_file_name.c_str());
 
   ///PDF
   //! \todo . PDF for each t
-  CImg<int> xpositionT(img_src.depth());
+  CImg<int> xpositionHA(img_src.depth());//x position based on average of x position (histogram)
   CImg<int> xpositionHisto((img_src.width()-1)/1,img_src.depth());
-  CImg<int> xpositionH(img_src.depth());
+  CImg<int> xpositionHM(img_src.depth());//x position based on maximum of x position histogram
   cimg_forY(xpositionYT,t)
   {
-    //! \todo . max histogram x position
+    //! \todo v max histogram x position
     const CImg<float> row=xpositionYT.get_shared_row(t);
 //row.print("x position vs y");
     const CImg<int> histo=row.get_histogram(xpositionHisto.width(),0,img_src.width()-2);
@@ -177,22 +184,22 @@ version: "+std::string(VERSION)+"\n compilation date: " \
         if(histo(x)>max) {xpos=x;max=histo(x);}
       }//class loop
       //! \bug in case of class width!=1
-      xpositionH(t)=xpos;
-    } else xpositionH(t)=-1;
+      xpositionHM(t)=xpos;
+    } else xpositionHM(t)=-1;
 //histo.print("x position histogram");
     //! \todo max position
     //! \todo median x position
     //average x position
-    xpositionT(t)=0;int count=0;
+    xpositionHA(t)=0;int count=0;
     cimg_forX(xpositionYT,y)
     {
       if((xpositionYT(y,t)>-1)&&(xpositionYT(y,t)<img_src.depth()-1))
       {
-        xpositionT(t)+=xpositionYT(y,t);
+        xpositionHA(t)+=xpositionYT(y,t);
         ++count;
       }//valid position
     }//y loop
-    if(count>0) xpositionT(t)/=count; else xpositionT(t)=-1;
+    if(count>0) xpositionHA(t)/=count; else xpositionHA(t)=-1;
     //show histogram for time selection
 /**/
     if((t>t0)&&(t<t1))
@@ -204,24 +211,25 @@ histo.print("x position histogram");
 /**/
   }//time loop
 
-  if(show) xpositionH.display_graph("xpositionH");
-  /*else*/ xpositionH.print("xposition vs time");
+  if(show) xpositionHM.display_graph("xpositionHM");
+  /*else*/ xpositionHM.print("x position vs time");
 
-  if(show) xpositionT.display_graph("xpositionT");
-  /*else*/ xpositionT.print("xposition vs time");
+  if(show) xpositionHA.display_graph("xpositionHA");
+  /*else*/ xpositionHA.print("x position vs time");
 
   //show several position detection results
-  CImg<int> xposition(position.width(),1,1,3);
-  xposition.draw_image(0,0,0,0,position);
-  xposition.draw_image(0,0,0,1,xpositionT);
-  xposition.draw_image(0,0,0,2,xpositionH);
+  CImg<int> xposition(xpositionAF.width(),1,1,4);
+  xposition.draw_image(0,0,0,0,xpositionAF);
+  xposition.draw_image(0,0,0,1,xpositionAD);
+  xposition.draw_image(0,0,0,2,xpositionHA);
+  xposition.draw_image(0,0,0,3,xpositionHM);
   xposition.display_graph("x position detections");
 
   xposition.save(output_file_name.c_str());
 
   //show position
     //load volume
-    if(position.width()!=img_vol.depth())
+    if(xposition.width()!=img_vol.depth())
     {
       std::cerr<<"error: img/vol dimension.\n";
       std::exit(1);
@@ -234,7 +242,7 @@ histo.print("x position histogram");
     cimg_forZ(img_vol,t)
     {
       //draw single line
-      img_vol.draw_line(position(t),y0,t,position(t),y1,t,max);
+      img_vol.draw_line(xpositionAF(t),y0,t,xpositionAF(t),y1,t,max);
       //show part of volume only
   if(show)
   {
@@ -253,8 +261,8 @@ histo.print("x position histogram");
         CImg<int> disp=img_src.get_slice(t);
         const int lmax[1]={disp.max()};
         const int lmaxL[1]={(int)((float)disp.max()*0.8f)};
-        disp.draw_line(position(t)  ,y0, position(t) ,y1,lmax);    //draw position of average along y
-        disp.draw_line(xpositionT(t),y0,xpositionT(t),y1,lmaxL);   //draw average position
+        disp.draw_line(xpositionAF(t),y0,xpositionAF(t),y1,lmax);  //draw position of average along y
+        disp.draw_line(xpositionHA(t),y0,xpositionHA(t),y1,lmaxL); //draw average position
         cimg_forY(disp,y) disp.draw_point(xpositionYT(y,t),y,lmax);//draw positions
         disp.display("plane");
       }//show selection
