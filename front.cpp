@@ -270,7 +270,7 @@ histo.print("x position histogram");
         const int lmax[1]={disp.max()};
         const int lmaxL[1]={(int)((float)disp.max()*0.8f)};
         disp.draw_line(xpositionAF(t),y0,xpositionAF(t),y1,lmax);  //draw position of average along y
-        disp.draw_line(xpositionHA(t),y0,xpositionHA(t),y1,lmaxL); //draw average position
+        disp.draw_line(xpositionHM(t),y0,xpositionHM(t),y1,lmaxL); //draw histo. max. position
         cimg_forY(disp,y) disp.draw_point(xpositionYT(y,t),y,lmax);//draw positions
         disp.display("plane");
       }//show selection
