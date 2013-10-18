@@ -1,0 +1,7 @@
+image front detection by image processing
+restrictions:
+1. front should progress vs time along x axis.
+2. front should have same position along y axis.
+
+for compilation, see _info.txt (need CImg library see http://cimg.sourceforge.net/)
+
