@@ -3,5 +3,20 @@ restrictions:
 1. front should progress vs time along x axis.
 2. front should have same position along y axis.
 
-for compilation, see _info.txt (need CImg library see http://cimg.sourceforge.net/)
+Input:  image sequence as a dense volume: (x,y,t) i.e. (x,y) image and t time.
+Output: graph with x position vs time with several i algorithm, i.e. (i,xp,t).
+Algorithm: 4 presently
+1. mean along y
+1.0. average volume along y axis giving a (x,t) data
+1.1. get fixed   threshold position (i=0)
+1.2. get dynamic threshold position (i=1)
+2. histogram based
+2.0. position for each lines (for looop along y axis) then setup position histogram data
+2.1. get average position (i=2)
+2.2. get maximum position (i=3)
+
+For compilation, see _info.txt (need CImg library see http://cimg.sourceforge.net/)
+
+Run: show all options (both command line and compilation ones) using:
+  ./front -h -I
 
