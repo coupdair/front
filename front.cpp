@@ -1,6 +1,10 @@
-/*
-
-*/
+/**
+ * front.cpp
+ * image front detection by image processing
+ * Sebastien COUDERT
+ * Laboratoire de PhysicoChimie des Processus de Combustion et de l'Atmosphere (PC2A, MeOL)
+ *
+**/
 
 #include <iostream>
 #include <string>
